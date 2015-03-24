@@ -5,6 +5,10 @@
  */
 package gui;
 
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.NumberFormat;
 import javax.swing.JFormattedTextField;
 import javax.swing.event.DocumentEvent;
@@ -55,6 +59,7 @@ public class SubtitleSearcherGui extends javax.swing.JFrame
         yearField = new javax.swing.JFormattedTextField();
         yearLabel = new javax.swing.JLabel();
         exampleLabel = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("OpenSubtitles.org Subtitle Searcher");
@@ -150,6 +155,17 @@ public class SubtitleSearcherGui extends javax.swing.JFrame
         exampleLabel.setForeground(new java.awt.Color(102, 102, 102));
         exampleLabel.setText("e.g. 2 broke girls s03e14");
 
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(51, 51, 255));
+        jLabel1.setText("github.com/alpsayin");
+        jLabel1.addMouseListener(new java.awt.event.MouseAdapter()
+        {
+            public void mouseClicked(java.awt.event.MouseEvent evt)
+            {
+                jLabel1MouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -158,7 +174,6 @@ public class SubtitleSearcherGui extends javax.swing.JFrame
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(searchStringField)
-                    .addComponent(titleLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(searchTitleLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -172,6 +187,14 @@ public class SubtitleSearcherGui extends javax.swing.JFrame
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(searchButton))
                     .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(episodeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 46, Short.MAX_VALUE)
+                            .addComponent(yearLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(9, 9, 9)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(yearField, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(episodeField)))
+                    .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(seriesCheckBox)
@@ -180,20 +203,18 @@ public class SubtitleSearcherGui extends javax.swing.JFrame
                             .addComponent(conventionalSearchStringLabel))
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(episodeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 46, Short.MAX_VALUE)
-                            .addComponent(yearLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(9, 9, 9)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(yearField, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(episodeField))))
+                        .addComponent(titleLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 278, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 11, Short.MAX_VALUE)
+                        .addComponent(jLabel1)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(titleLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(titleLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(seriesCheckBox)
@@ -271,6 +292,25 @@ public class SubtitleSearcherGui extends javax.swing.JFrame
     {//GEN-HEADEREND:event_yearFieldActionPerformed
         performSearch();
     }//GEN-LAST:event_yearFieldActionPerformed
+
+    private void jLabel1MouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_jLabel1MouseClicked
+    {//GEN-HEADEREND:event_jLabel1MouseClicked
+        if(Desktop.isDesktopSupported())
+        {
+            try
+            {
+                Desktop.getDesktop().browse(new URI("http://github.com/alpsayin"));
+            }
+            catch(IOException ioe)
+            {
+                ioe.printStackTrace();
+            }
+            catch(URISyntaxException use)
+            {
+                use.printStackTrace();
+            }
+        }
+    }//GEN-LAST:event_jLabel1MouseClicked
     NumberFormat seFormat = NumberFormat.getIntegerInstance();
     NumberFormatter seFormatter = new NumberFormatter(seFormat);
     DefaultFormatterFactory factory = new DefaultFormatterFactory(seFormatter);
@@ -440,6 +480,7 @@ public class SubtitleSearcherGui extends javax.swing.JFrame
     private javax.swing.JTextField episodeField;
     private javax.swing.JLabel episodeLabel;
     private javax.swing.JLabel exampleLabel;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JCheckBox moviesCheckBox;
     private javax.swing.JButton searchButton;
     private javax.swing.JTextField searchStringField;
