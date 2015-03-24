@@ -6,13 +6,16 @@
 package gui;
 
 import java.awt.Desktop;
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.NumberFormat;
+import javax.swing.JFileChooser;
 import javax.swing.JFormattedTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.NumberFormatter;
 import subtitlesearcher.SubtitleSearcher;
@@ -31,6 +34,9 @@ public class SubtitleSearcherGui extends javax.swing.JFrame
     {
         initComponents();
         searchStringField.requestFocus();
+        jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        jfc.setMultiSelectionEnabled(false);
+        jfc.setFileFilter(new FileNameExtensionFilter("Movie Files", "avi","mp4","mkv","wmv","mpg","flv","3gp","mov","mpeg","rm","divx"));
     }
 
     /**
@@ -55,16 +61,21 @@ public class SubtitleSearcherGui extends javax.swing.JFrame
         episodeField = new javax.swing.JFormattedTextField();
         conventionalSearchStringLabel = new javax.swing.JLabel();
         searchStringField = new javax.swing.JTextField();
-        searchButton = new javax.swing.JButton();
+        searchWparamButton = new javax.swing.JButton();
         yearField = new javax.swing.JFormattedTextField();
         yearLabel = new javax.swing.JLabel();
         exampleLabel = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        filepathTextField = new javax.swing.JTextField();
+        browseButton = new javax.swing.JButton();
+        searchWfileButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("OpenSubtitles.org Subtitle Searcher");
         setLocation(new java.awt.Point(320, 240));
 
+        titleLabel.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         titleLabel.setText("OpenSubtitles Subtitle Searcher");
 
         typeButtonGroup.add(seriesCheckBox);
@@ -120,6 +131,7 @@ public class SubtitleSearcherGui extends javax.swing.JFrame
             }
         });
 
+        conventionalSearchStringLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         conventionalSearchStringLabel.setText("Conventional Search String");
 
         searchStringField.getDocument().addDocumentListener(documentListener);
@@ -131,12 +143,12 @@ public class SubtitleSearcherGui extends javax.swing.JFrame
             }
         });
 
-        searchButton.setText("Search");
-        searchButton.addActionListener(new java.awt.event.ActionListener()
+        searchWparamButton.setText("Search with Parameters");
+        searchWparamButton.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                searchButtonActionPerformed(evt);
+                searchWparamButtonActionPerformed(evt);
             }
         });
 
@@ -166,6 +178,29 @@ public class SubtitleSearcherGui extends javax.swing.JFrame
             }
         });
 
+        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel2.setText("Search by selection a file and submitting its size");
+
+        filepathTextField.setEditable(false);
+
+        browseButton.setText("Browse");
+        browseButton.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                browseButtonActionPerformed(evt);
+            }
+        });
+
+        searchWfileButton.setText("Search with file");
+        searchWfileButton.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                searchWfileButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -173,27 +208,6 @@ public class SubtitleSearcherGui extends javax.swing.JFrame
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(searchStringField)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(searchTitleLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(seasonLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 46, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(seasonField)
-                            .addComponent(titleField)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(exampleLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(searchButton))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(episodeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 46, Short.MAX_VALUE)
-                            .addComponent(yearLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(9, 9, 9)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(yearField, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(episodeField)))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
@@ -201,12 +215,43 @@ public class SubtitleSearcherGui extends javax.swing.JFrame
                                 .addGap(18, 18, 18)
                                 .addComponent(moviesCheckBox))
                             .addComponent(conventionalSearchStringLabel))
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addGap(250, 250, 250))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(titleLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 278, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 11, Short.MAX_VALUE)
-                        .addComponent(jLabel1)))
-                .addContainerGap())
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(searchStringField)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(searchTitleLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(seasonLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 46, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(seasonField)
+                                    .addComponent(titleField)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(episodeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 46, Short.MAX_VALUE)
+                                    .addComponent(yearLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGap(9, 9, 9)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(yearField, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(episodeField)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(titleLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 278, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel1))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(exampleLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(searchWparamButton, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(filepathTextField)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(browseButton))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(searchWfileButton, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -240,10 +285,18 @@ public class SubtitleSearcherGui extends javax.swing.JFrame
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(searchStringField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(exampleLabel)
+                    .addComponent(searchWparamButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(searchButton)
-                    .addComponent(exampleLabel))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(filepathTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(browseButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(searchWfileButton)
+                .addContainerGap())
         );
 
         titleField.getDocument().addDocumentListener(documentListener);
@@ -253,10 +306,10 @@ public class SubtitleSearcherGui extends javax.swing.JFrame
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void searchButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_searchButtonActionPerformed
-    {//GEN-HEADEREND:event_searchButtonActionPerformed
+    private void searchWparamButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_searchWparamButtonActionPerformed
+    {//GEN-HEADEREND:event_searchWparamButtonActionPerformed
         performSearch();
-    }//GEN-LAST:event_searchButtonActionPerformed
+    }//GEN-LAST:event_searchWparamButtonActionPerformed
 
     private void searchStringFieldActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_searchStringFieldActionPerformed
     {//GEN-HEADEREND:event_searchStringFieldActionPerformed
@@ -311,12 +364,35 @@ public class SubtitleSearcherGui extends javax.swing.JFrame
             }
         }
     }//GEN-LAST:event_jLabel1MouseClicked
-    NumberFormat seFormat = NumberFormat.getIntegerInstance();
-    NumberFormatter seFormatter = new NumberFormatter(seFormat);
-    DefaultFormatterFactory factory = new DefaultFormatterFactory(seFormatter);
+
+    private void browseButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_browseButtonActionPerformed
+    {//GEN-HEADEREND:event_browseButtonActionPerformed
+        int retVal = jfc.showOpenDialog(this);
+        if(retVal == JFileChooser.APPROVE_OPTION)
+        {
+            File f = jfc.getSelectedFile();
+            filepathTextField.setText(f.getAbsolutePath());
+            filelength = f.length();
+        }
+    }//GEN-LAST:event_browseButtonActionPerformed
+
+    private void searchWfileButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_searchWfileButtonActionPerformed
+    {//GEN-HEADEREND:event_searchWfileButtonActionPerformed
+        if(filelength > 0)
+        {
+            type = SubtitleSearcher.SearchType.FILESIZE;
+            ss = new SubtitleSearcher(type, filelength);
+            ss.openBrowser();
+        }
+    }//GEN-LAST:event_searchWfileButtonActionPerformed
+    private JFileChooser jfc = new JFileChooser(new File(System.getProperty("user.home")));
+    private NumberFormat seFormat = NumberFormat.getIntegerInstance();
+    private NumberFormatter seFormatter = new NumberFormatter(seFormat);
+    private DefaultFormatterFactory factory = new DefaultFormatterFactory(seFormatter);
     private SubtitleSearcher.SearchType type;
     private SubtitleSearcher ss;
     private int year = -1;
+    private long filelength = -1;
     private final DocumentListener documentListener = new DocumentListener()
     {
         @Override
@@ -476,15 +552,19 @@ public class SubtitleSearcherGui extends javax.swing.JFrame
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton browseButton;
     private javax.swing.JLabel conventionalSearchStringLabel;
     private javax.swing.JTextField episodeField;
     private javax.swing.JLabel episodeLabel;
     private javax.swing.JLabel exampleLabel;
+    private javax.swing.JTextField filepathTextField;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JCheckBox moviesCheckBox;
-    private javax.swing.JButton searchButton;
     private javax.swing.JTextField searchStringField;
     private javax.swing.JLabel searchTitleLabel;
+    private javax.swing.JButton searchWfileButton;
+    private javax.swing.JButton searchWparamButton;
     private javax.swing.JTextField seasonField;
     private javax.swing.JLabel seasonLabel;
     private javax.swing.JCheckBox seriesCheckBox;

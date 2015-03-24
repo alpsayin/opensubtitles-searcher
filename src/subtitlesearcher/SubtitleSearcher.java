@@ -25,6 +25,7 @@ public class SubtitleSearcher
     private int episode;
     private int year;
     private String conventionalSearchString;
+    private long filelength;
     public SubtitleSearcher(SearchType type, String title, int season, int episode, int year)
     {
         this.type = type;
@@ -32,13 +33,20 @@ public class SubtitleSearcher
         this.season = season;
         this.episode = episode;
         this.year = year;
+        this.filelength = 0;
         this.conventionalSearchString = title+" "+encodeEpisodeIdentifier(season, episode);
     }    
     public SubtitleSearcher(SearchType type, String conventionalSearchString, int year)
     {
         this.type = type;
         this.year = year;
+        this.filelength = 0;
         this.conventionalSearchString = conventionalSearchString;
+    }    
+    public SubtitleSearcher(SearchType type, long filelength)
+    {
+        this(type,"",-1,-1,-1);
+        this.filelength = filelength;
     }    
     public String generateSearchURL()
     {
@@ -48,16 +56,25 @@ public class SubtitleSearcher
             result += "searchonlytvseries-on/";
             result += "season-"+getSeason()+"/";
             result += "episode-"+getEpisode()+"/";
+            if(getYear() > 0)
+                result += "movieyearsign-1/movieyear-"+getYear()+"/";
+
+            result += "moviename-"+getTitle().replaceAll(" ", "+");
         }
         else if(getType() == SearchType.MOVIES)
         {
             result += "searchonlymovies-on/";
+            if(getYear() > 0)
+                result += "movieyearsign-1/movieyear-"+getYear()+"/";
+
+            result += "moviename-"+getTitle().replaceAll(" ", "+");
         }
-        
-        if(getYear() > 0)
-            result += "movieyearsign-1/movieyear-"+getYear()+"/";
-        
-        result += "moviename-"+getTitle().replaceAll(" ", "+");
+        else if(getType() == SearchType.FILESIZE)
+        {
+            result += "moviebytesize-"+filelength+"/";
+            if(getYear() > 0)
+                result += "movieyearsign-1/movieyear-"+getYear()+"/";
+        }
         
         return result;
     }
@@ -174,10 +191,6 @@ public class SubtitleSearcher
     {
         this.year = year;
     }
-    public static enum SearchType
-    {
-        MOVIES, SERIES;
-    }
     public boolean decodeEpisodeIdentifier()
     {
         Pattern p = Pattern.compile("(.*?)[.\\s][sS](\\d{2})[eE](\\d{2}).*");
@@ -219,5 +232,8 @@ public class SubtitleSearcher
     {
         // TODO code application logic here
     }
-    
+    public static enum SearchType
+    {
+        MOVIES, SERIES, FILESIZE;
+    }
 }
