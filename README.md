@@ -6,7 +6,7 @@ Simple Java GUI to Search for Movie or Series/Shows Subtitles on opensubtitles.o
 
 To Run
 -------
-+ Have Java 6 or higher (java.com/download)
++ Have Java 6 or higher ([Java Download] (http://java.com/download/ "Java Download"))
 + Run the JAR file in dist folder with JAVA(TM) Platform SE Binary (Windows, tested)
 + If you're using linux or mac double click or type in "java -jar dist/SubtitleSearcher.jar" in terminal
 
