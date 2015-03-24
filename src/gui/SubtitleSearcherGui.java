@@ -179,7 +179,7 @@ public class SubtitleSearcherGui extends javax.swing.JFrame
         });
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel2.setText("Search by selection a file and submitting its size");
+        jLabel2.setText("Search by selecting a movie file");
 
         filepathTextField.setEditable(false);
 
