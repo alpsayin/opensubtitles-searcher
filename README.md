@@ -14,7 +14,8 @@ Features
 --------
 + Fixed to english language, couldn't bother to add languages, send updates if you want to add your language
 + SxxEyy auto text field completion
-+ Search TV Series or Movies
++ Search TV Series or Movies with their title and/or season+episode and/or year
++ Search for subtitles by selecting a movie file(submits its file size) and year(optional)
 + Opens the default web-browser and takes you to search results page
 + Simply because I got bored and procrastinating
 
