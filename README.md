@@ -1,6 +1,7 @@
 # opensubtitles-searcher
 
 Simple Java GUI to Search for Movie or Series/Shows Subtitles on opensubtitles.org website
++ Simply because I got bored and procrastinating
 
 ![GUI Screenshot](https://github.com/alpsayin/opensubtitles-searcher/blob/master/Screenshot_1.png?raw=true "GUI Screenshot")
 
@@ -13,11 +14,11 @@ To Run
 Features
 --------
 + Fixed to english language, couldn't bother to add languages, send updates if you want to add your language
-+ SxxEyy auto text field completion
++ SxxEyy auto text field completion (e.g. s02e12)
 + Search TV Series or Movies with their title and/or season+episode and/or year
 + Search for subtitles by selecting a movie file(submits its file size) and year(optional)
++ It will remember where you picked your last movie file from, so you don't have to browse to your movie/seris directory everytime
 + Opens the default web-browser and takes you to search results page
-+ Simply because I got bored and procrastinating
 
 TODO
 ----
