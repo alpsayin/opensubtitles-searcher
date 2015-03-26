@@ -397,6 +397,8 @@ public class SubtitleSearcherGui extends javax.swing.JFrame
             File f = jfc.getSelectedFile();
             filepathTextField.setText(f.getAbsolutePath());
             filelength = f.length();
+            searchStringField.setText(f.getName());
+            searchInterpret();
         }
         else
         {
