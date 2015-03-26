@@ -14,9 +14,10 @@ To Run
 Features
 --------
 + Fixed to english language, couldn't bother to add languages, send updates if you want to add your language
-+ SxxEyy auto text field completion (e.g. s02e12)
++ SxxEyy auto text field completion, i.e. parses s02e12 text into relevant fields
 + Search TV Series or Movies with their title and/or season+episode and/or year
 + Search for subtitles by selecting a movie file(submits its file size) and year(optional)
++ Parses filenames into title, season and episodes
 + It will remember where you picked your last movie file from, so you don't have to browse to your movie/seris directory everytime
 + Opens the default web-browser and takes you to search results page
 
