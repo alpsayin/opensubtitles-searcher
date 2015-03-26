@@ -301,6 +301,9 @@
       <Properties>
         <Property name="editable" type="boolean" value="false"/>
       </Properties>
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="filepathTextFieldMouseClicked"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="browseButton">
       <Properties>

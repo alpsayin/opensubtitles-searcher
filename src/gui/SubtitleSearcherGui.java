@@ -6,11 +6,20 @@
 package gui;
 
 import java.awt.Desktop;
+import java.awt.event.ActionEvent;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.NumberFormat;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JFormattedTextField;
 import javax.swing.event.DocumentEvent;
@@ -33,7 +42,12 @@ public class SubtitleSearcherGui extends javax.swing.JFrame
     public SubtitleSearcherGui()
     {
         initComponents();
+        readConfiguration();
+        if(browseDirectory.length() == 0)
+            browseDirectory = System.getProperty("user.home");
         searchStringField.requestFocus();
+        filepathTextField.setText(browseDirectory);
+        jfc = new JFileChooser(new File(browseDirectory));
         jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
         jfc.setMultiSelectionEnabled(false);
         jfc.setFileFilter(new FileNameExtensionFilter("Movie Files", "avi","mp4","mkv","wmv","mpg","flv","3gp","mov","mpeg","rm","divx"));
@@ -182,6 +196,13 @@ public class SubtitleSearcherGui extends javax.swing.JFrame
         jLabel2.setText("Search by selecting a movie file");
 
         filepathTextField.setEditable(false);
+        filepathTextField.addMouseListener(new java.awt.event.MouseAdapter()
+        {
+            public void mouseClicked(java.awt.event.MouseEvent evt)
+            {
+                filepathTextFieldMouseClicked(evt);
+            }
+        });
 
         browseButton.setText("Browse");
         browseButton.addActionListener(new java.awt.event.ActionListener()
@@ -368,11 +389,18 @@ public class SubtitleSearcherGui extends javax.swing.JFrame
     private void browseButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_browseButtonActionPerformed
     {//GEN-HEADEREND:event_browseButtonActionPerformed
         int retVal = jfc.showOpenDialog(this);
+        File currentDirectory = jfc.getCurrentDirectory();
+        browseDirectory = currentDirectory.getAbsolutePath();
+        writeBrowseDirectory();
         if(retVal == JFileChooser.APPROVE_OPTION)
         {
             File f = jfc.getSelectedFile();
             filepathTextField.setText(f.getAbsolutePath());
             filelength = f.length();
+        }
+        else
+        {
+            filepathTextField.setText(browseDirectory);
         }
     }//GEN-LAST:event_browseButtonActionPerformed
 
@@ -385,67 +413,117 @@ public class SubtitleSearcherGui extends javax.swing.JFrame
             ss.openBrowser();
         }
     }//GEN-LAST:event_searchWfileButtonActionPerformed
-    private JFileChooser jfc = new JFileChooser(new File(System.getProperty("user.home")));
-    private NumberFormat seFormat = NumberFormat.getIntegerInstance();
-    private NumberFormatter seFormatter = new NumberFormatter(seFormat);
-    private DefaultFormatterFactory factory = new DefaultFormatterFactory(seFormatter);
-    private SubtitleSearcher.SearchType type;
-    private SubtitleSearcher ss;
-    private int year = -1;
-    private long filelength = -1;
-    private final DocumentListener documentListener = new DocumentListener()
+
+    private void filepathTextFieldMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_filepathTextFieldMouseClicked
+    {//GEN-HEADEREND:event_filepathTextFieldMouseClicked
+        ActionEvent ae = new ActionEvent(evt, evt.getID(), "MouseClick");
+        browseButtonActionPerformed(ae);
+    }//GEN-LAST:event_filepathTextFieldMouseClicked
+    public void createConfiguration()
     {
-        @Override
-        public void insertUpdate(DocumentEvent e)
+        InputStream defaultConfigurationInputStream = getClass().getResourceAsStream("/conf/SubtitleSearcher.conf");
+        File confFile = new File(System.getProperty("user.home")+File.separator+".subtitle_searcher"+File.separator+"conf"+File.separator+"SubtitleSearcher.conf");
+        
+        try
         {
-            if(e.getDocument() == seasonField.getDocument())
+            if (!confFile.exists())
             {
-                
-            }
-            else if(e.getDocument() == episodeField.getDocument())
-            {
-                
-            }
-            else if(e.getDocument() == searchStringField.getDocument())
-            {
-                searchInterpret();
+                byte[] buffer = new byte[4096];
+                confFile.getParentFile().mkdirs();
+                confFile.createNewFile();
+                BufferedOutputStream bos = new  BufferedOutputStream(new FileOutputStream(confFile));
+                BufferedInputStream bis = new BufferedInputStream(defaultConfigurationInputStream);
+                int nreadbytes;
+                int offset = 0;
+                while(true)
+                {
+                    nreadbytes = bis.read(buffer);
+                    if(nreadbytes == -1)
+                        break;
+                    bos.write(buffer,offset,nreadbytes);
+                    offset += nreadbytes;
+                };
+                bis.close();
+                bos.close();
             }
         }
-
-        @Override
-        public void removeUpdate(DocumentEvent e)
+        catch (IOException ex)
         {
-            if(e.getDocument() == seasonField.getDocument())
-            {
-                
-            }
-            else if(e.getDocument() == episodeField.getDocument())
-            {
-                
-            }
-            else if(e.getDocument() == searchStringField.getDocument())
-            {
-                searchInterpret();
-            }
+            Logger.getLogger(SubtitleSearcherGui.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        @Override
-        public void changedUpdate(DocumentEvent e)
+    }
+    public void readConfiguration()
+    {
+        boolean browseDirectoryFound = false;
+        try
         {
-            if(e.getDocument() == seasonField.getDocument())
+            File confFile = new File(System.getProperty("user.home")+File.separator+".subtitle_searcher"+File.separator+"conf"+File.separator+"SubtitleSearcher.conf");
+            System.out.println(confFile.getAbsolutePath());
+            if(!confFile.exists())
+                createConfiguration();
+            
+            Scanner scan = new Scanner(confFile);
+            while(scan.hasNextLine())
             {
-                
+                String line = scan.nextLine();
+                for(int i=0; i<SETTINGS.length; i++)
+                {
+                    String setting = SETTINGS[i];
+                    int index = line.toLowerCase().indexOf(setting+'=');
+                    if( index != 0)
+                    {
+                        String value = line.substring(index+setting.length()+2);
+                        System.out.println(value);
+                        browseDirectory = value;
+                        browseDirectoryFound = true;
+                    }
+                }
             }
-            else if(e.getDocument() == episodeField.getDocument())
-            {
-                
-            }
-            else if(e.getDocument() == searchStringField.getDocument())
-            {
-                searchInterpret();
-            }
+            scan.close();
         }
-    };
+        catch (IOException ex)
+        {
+            Logger.getLogger(SubtitleSearcherGui.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if(!browseDirectoryFound)
+        {
+            browseDirectory = System.getProperty("user.home");
+        }
+    }
+    
+    private void writeBrowseDirectory()
+    {
+        try
+        {
+            File confFile = new File(System.getProperty("user.home")+File.separator+".subtitle_searcher"+File.separator+"conf"+File.separator+"SubtitleSearcher.conf");
+            File tempConfFile = File.createTempFile(System.getProperty("user.home")+File.separator+".subtitle_searcher"+File.separator+"conf"+File.separator+"SubtitleSearcher",".conf");
+            PrintStream ps = new PrintStream(tempConfFile);
+            if (!confFile.exists())
+                createConfiguration();
+            Scanner scan = new Scanner(confFile);
+            while(scan.hasNextLine())
+            {
+                String line = scan.nextLine();
+                String setting = SETTINGS[0]; // "BrowseDirectory"
+                {
+                    int index = line.toLowerCase().indexOf(setting+'=');
+                    if( index != 0)
+                    {
+                        line = setting+'='+browseDirectory;
+                    }
+                }
+                ps.println(line);
+            }
+            scan.close();
+            ps.close();
+            confFile.delete();
+            tempConfFile.renameTo(confFile);
+        }
+        catch (IOException ex)
+        {
+            Logger.getLogger(SubtitleSearcherGui.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     public void performSearch()
     {
         typeSelect();
@@ -551,6 +629,70 @@ public class SubtitleSearcherGui extends javax.swing.JFrame
         });
     }
 
+private class SubtitleEntryListener implements DocumentListener
+    {
+        @Override
+        public void insertUpdate(DocumentEvent e)
+        {
+            if(e.getDocument() == seasonField.getDocument())
+            {
+                
+            }
+            else if(e.getDocument() == episodeField.getDocument())
+            {
+                
+            }
+            else if(e.getDocument() == searchStringField.getDocument())
+            {
+                searchInterpret();
+            }
+        }
+
+        @Override
+        public void removeUpdate(DocumentEvent e)
+        {
+            if(e.getDocument() == seasonField.getDocument())
+            {
+                
+            }
+            else if(e.getDocument() == episodeField.getDocument())
+            {
+                
+            }
+            else if(e.getDocument() == searchStringField.getDocument())
+            {
+                searchInterpret();
+            }
+        }
+
+        @Override
+        public void changedUpdate(DocumentEvent e)
+        {
+            if(e.getDocument() == seasonField.getDocument())
+            {
+                
+            }
+            else if(e.getDocument() == episodeField.getDocument())
+            {
+                
+            }
+            else if(e.getDocument() == searchStringField.getDocument())
+            {
+                searchInterpret();
+            }
+        }
+    }
+    private final String[] SETTINGS = {"BrowseDirectory"};
+    private SubtitleEntryListener documentListener = new SubtitleEntryListener();
+    private JFileChooser jfc;
+    private String browseDirectory;
+    private NumberFormat seFormat = NumberFormat.getIntegerInstance();
+    private NumberFormatter seFormatter = new NumberFormatter(seFormat);
+    private DefaultFormatterFactory factory = new DefaultFormatterFactory(seFormatter);
+    private SubtitleSearcher.SearchType type;
+    private SubtitleSearcher ss;
+    private int year = -1;
+    private long filelength = -1;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton browseButton;
     private javax.swing.JLabel conventionalSearchStringLabel;
