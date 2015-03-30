@@ -42,6 +42,7 @@ public class SubtitleSearcher
         this.year = year;
         this.filelength = 0;
         this.conventionalSearchString = conventionalSearchString;
+        decodeEpisodeIdentifier();
     }    
     public SubtitleSearcher(SearchType type, long filelength)
     {
