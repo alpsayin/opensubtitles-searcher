@@ -22,6 +22,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JFormattedTextField;
+import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -51,6 +52,7 @@ public class SubtitleSearcherGui extends javax.swing.JFrame
         jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
         jfc.setMultiSelectionEnabled(false);
         jfc.setFileFilter(new FileNameExtensionFilter("Movie Files", "avi","mp4","mkv","wmv","mpg","flv","3gp","mov","mpeg","rm","divx"));
+        fileDrop = new FileDrop( this.getContentPane(), /*dragBorder,*/ movieDropListener); // end FileDrop.Listener
     }
 
     /**
@@ -395,10 +397,7 @@ public class SubtitleSearcherGui extends javax.swing.JFrame
         if(retVal == JFileChooser.APPROVE_OPTION)
         {
             File f = jfc.getSelectedFile();
-            filepathTextField.setText(f.getAbsolutePath());
-            filelength = f.length();
-            searchStringField.setText(f.getName());
-            searchInterpret();
+            fileSelected(f);
         }
         else
         {
@@ -525,6 +524,14 @@ public class SubtitleSearcherGui extends javax.swing.JFrame
         {
             Logger.getLogger(SubtitleSearcherGui.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    private void fileSelected(File f)
+    {
+        jfc.setCurrentDirectory(f);
+        filepathTextField.setText(f.getAbsolutePath());
+        filelength = f.length();
+        searchStringField.setText(f.getName());
+        searchInterpret();
     }
     public void performSearch()
     {
@@ -684,17 +691,18 @@ private class SubtitleEntryListener implements DocumentListener
             }
         }
     }
-    private final String[] SETTINGS = {"BrowseDirectory"};
-    private SubtitleEntryListener documentListener = new SubtitleEntryListener();
-    private JFileChooser jfc;
-    private String browseDirectory;
-    private NumberFormat seFormat = NumberFormat.getIntegerInstance();
-    private NumberFormatter seFormatter = new NumberFormatter(seFormat);
-    private DefaultFormatterFactory factory = new DefaultFormatterFactory(seFormatter);
-    private SubtitleSearcher.SearchType type;
-    private SubtitleSearcher ss;
-    private int year = -1;
-    private long filelength = -1;
+    private class SubtitleMovieDropListener implements FileDrop.Listener
+    {   
+        @Override
+        public void filesDropped( java.io.File[] files )
+        {
+            if(files.length >= 1)
+            {
+                File f = files[0];
+                fileSelected(f);
+            }
+        }   // end filesDropped
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton browseButton;
     private javax.swing.JLabel conventionalSearchStringLabel;
@@ -718,4 +726,18 @@ private class SubtitleEntryListener implements DocumentListener
     private javax.swing.JTextField yearField;
     private javax.swing.JLabel yearLabel;
     // End of variables declaration//GEN-END:variables
+
+    private final String[] SETTINGS = {"BrowseDirectory"};
+    private SubtitleEntryListener documentListener = new SubtitleEntryListener();
+    private JFileChooser jfc;
+    private SubtitleMovieDropListener movieDropListener = new SubtitleMovieDropListener();
+    private FileDrop fileDrop;
+    private String browseDirectory;
+    private NumberFormat seFormat = NumberFormat.getIntegerInstance();
+    private NumberFormatter seFormatter = new NumberFormatter(seFormat);
+    private DefaultFormatterFactory factory = new DefaultFormatterFactory(seFormatter);
+    private SubtitleSearcher.SearchType type;
+    private SubtitleSearcher ss;
+    private int year = -1;
+    private long filelength = -1;
 }
